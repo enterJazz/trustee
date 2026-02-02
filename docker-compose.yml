@@ -48,6 +48,8 @@ services:
     ]
     depends_on:
     - rvps
+    extra_hosts:
+      - "pccs.host:10.0.2.2"
 
   rvps:
     build:
