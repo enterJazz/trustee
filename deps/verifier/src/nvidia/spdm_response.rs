@@ -201,7 +201,7 @@ impl OpaqueData {
             let array: [u8; 2] = bytes[offset..offset + 2].try_into()?;
             let data_type = u16::from_le_bytes(array);
             item.r#type = OpaqueDataType::from_u16(data_type)
-                .ok_or(anyhow!("Invalid OpaqueDataType {}", data_type))?;
+                .unwrap_or(OpaqueDataType::Invalid);
             offset += 2;
 
             // DataSize
@@ -235,7 +235,10 @@ impl OpaqueData {
                 ),
                 OpaqueDataType::MsrsCnt => Self::decode_measurement_count(data_bytes)?,
                 OpaqueDataType::SwitchPdi => Self::decode_switch_pdi(data_bytes)?,
-                OpaqueDataType::Invalid => bail!(anyhow!("Hashmap: Invalid OpaqueDataType")),
+                OpaqueDataType::Invalid => {
+                    // Unknown data type; skip
+                    continue;
+                } ,
                 _ => Value::String(hex::encode(data_bytes)),
             };
 
