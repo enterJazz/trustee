@@ -4,6 +4,10 @@ services:
       context: .
       dockerfile: kbs/docker/coco-as-grpc/Dockerfile
     image: ghcr.io/confidential-containers/staged-images/kbs-grpc-as:latest
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
     environment:
       - RUST_LOG
     command: [
@@ -49,7 +53,7 @@ services:
     depends_on:
     - rvps
     extra_hosts:
-      - "pccs.host:10.0.2.2"
+      - "pccs.host:host-gateway"
 
   rvps:
     build:
